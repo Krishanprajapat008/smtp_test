@@ -39,7 +39,7 @@ class MailerController extends Controller
         $mailrecord-> SMTP_Host = $request->smtp_host;
         $mailrecord-> SMTP_Port = $request->smtp_port;
         $mailrecord-> Username = $request->username;
-        $mailrecord-> SMTP_Password = Hash::make($request->smtp_password);
+        $mailrecord-> SMTP_Password = $request->smtp_password;
         $mailrecord-> From_Name = $request->from_name;
         $mailrecord-> SMTP_Encryption = $request->smtpEncryption;
         $mailrecord-> From_Email = $request->from_email;
@@ -64,18 +64,23 @@ class MailerController extends Controller
         require base_path('vendor/autoload.php');
         $mail = new PHPMailer(true);
 
+        //Fatch records from database
+        $smtp_mail = smtpRecord::orderBy('id', 'DESC')->first();
+
+
+
         //Email Server Setting
 
         $mail->SMTPDebug = 0;
         $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';
+        $mail->Host = $smtp_mail->SMTP_Host;
         $mail->SMTPAuth = true;
-        $mail->Username = 'senderemail@gmail.com';
-        $mail->Password = 'senderpassword';
-        $mail->SMTPSecure = 'tls';
-        $mail->Port = 587;
+        $mail->Username = $smtp_mail->From_Email;
+        $mail->Password = $smtp_mail->SMTP_Password;
+        $mail->SMTPSecure = $smtp_mail->SMTP_Encryption;
+        $mail->Port = $smtp_mail->SMTP_Port;
 
-        $mail->setFrom('senderemail@gmail.com');
+        $mail->setFrom($smtp_mail->From_Email);
         $mail->addAddress($email);
 
         $mail->isHTML(true);

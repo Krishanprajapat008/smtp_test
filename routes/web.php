@@ -26,3 +26,4 @@ route::get("email",[MailerController::class,"email"])->name('email');
 route::post("send-email",[MailerController::class,"composeEmail"])->name('send-email');
 route::post("/sendmail",[MailerController::class,"sendmail"])->name('sendmail');
 
+
